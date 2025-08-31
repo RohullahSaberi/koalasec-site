@@ -46,6 +46,7 @@ def save_contact_message(data):
             'ip': request.remote_addr,
             'name': data.get('name', ''),
             'email': data.get('email', ''),
+            'phone': data.get('phone', ''),
             'company': data.get('company', ''),
             'message': data.get('message', '')
         }
@@ -61,13 +62,14 @@ def save_contact_message(data):
             *👤 Name:* `{message_data['name']}`
             *📧 Email:* `{message_data['email']}`
             🏢 *Company:* `{message_data['company']}`
+            *🌐 Phone:* `{message_data['phone']}`
 
             *💬 Message:*  
             _{message_data['message']}_
             """
             }
         response = requests.post(TELEGRAM_API_URL, json=payload)
-        messages.append(message_data)
+        # messages.append(message_data)
         
         with open(MESSAGES_FILE, 'w') as f:
             json.dump(messages, f, indent=2)
@@ -147,6 +149,7 @@ def contact():
         # Validate form data
         name = request.form.get('name', '').strip()
         email = request.form.get('email', '').strip()
+        phone = request.form.get('phone', '').strip()
         company = request.form.get('company', '').strip()
         message = request.form.get('message', '').strip()
         honeypot = request.form.get('website', '')  # Hidden honeypot field
@@ -167,7 +170,8 @@ def contact():
                 'name': name,
                 'email': email,
                 'company': company,
-                'message': message
+                'message': message,
+                'phone': phone
             }):
                 return jsonify({'success': True, 'message': 'Message sent successfully!'})
             else:

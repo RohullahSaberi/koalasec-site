@@ -213,6 +213,7 @@ def remove_server_header(response):
 @app.after_request
 def add_security_headers(response):
     """Add security headers to all responses."""
+    response.headers['Server'] = 'Looking for server version hehe :/'
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'

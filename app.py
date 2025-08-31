@@ -48,6 +48,7 @@ def save_contact_message(data):
             'email': data.get('email', ''),
             'phone': data.get('phone', ''),
             'company': data.get('company', ''),
+            'service': data.get('service', ''),
             'message': data.get('message', '')
         }
         payload = {
@@ -63,6 +64,7 @@ def save_contact_message(data):
             *📧 Email:* `{message_data['email']}`
             🏢 *Company:* `{message_data['company']}`
             *🌐 Phone:* `{message_data['phone']}`
+            *🌐 Service:* `{message_data['service']}`
 
             *💬 Message:*  
             _{message_data['message']}_
@@ -152,6 +154,7 @@ def contact():
         phone = request.form.get('phone', '').strip()
         company = request.form.get('company', '').strip()
         message = request.form.get('message', '').strip()
+        service = request.form.get('service', '').strip()
         honeypot = request.form.get('website', '')  # Hidden honeypot field
         
         # Basic validation
@@ -171,7 +174,8 @@ def contact():
                 'email': email,
                 'company': company,
                 'message': message,
-                'phone': phone
+                'phone': phone,
+                'service': service
             }):
                 return jsonify({'success': True, 'message': 'Message sent successfully!'})
             else:

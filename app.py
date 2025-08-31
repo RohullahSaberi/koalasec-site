@@ -203,11 +203,7 @@ def humans():
 def not_found(error):
     """404 error page."""
     return render_template('404.html'), 404
-## Remove server header
-@app.after_request
-def remove_server_header(response):
-    response.headers["Server"] = "SecureServer"
-    return response
+
 
 # Security headers
 @app.after_request

@@ -203,6 +203,11 @@ def humans():
 def not_found(error):
     """404 error page."""
     return render_template('404.html'), 404
+## Remove server header
+@app.after_request
+def remove_server_header(response):
+    response.headers["Server"] = "SecureServer"
+    return response
 
 # Security headers
 @app.after_request
@@ -212,6 +217,7 @@ def add_security_headers(response):
     response.headers['X-Frame-Options'] = 'DENY'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['X-Hacker'] = 'Go and Fck yourself, I am a Hacker'
     
     # CSP header
     csp = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'"

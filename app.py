@@ -23,8 +23,19 @@ from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
 import requests
 import ipaddress
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_limiter.errors import RateLimitExceeded
 
 app = Flask(__name__)
+
+
+# Initialize limiter once in your app
+limiter = Limiter(
+    key_func=get_remote_address,
+    app=app,
+    default_limits=[]
+)
 
 # Configuration
 BLOG_DIR = 'blog'
@@ -145,6 +156,7 @@ Delivering innovative, reliable, and secure solutions for businesses and individ
     return render_template('partners.html', partners=partners_list)
 
 @app.route('/contact', methods=['GET', 'POST'])
+@limiter.limit("10 per hour", methods=["POST"])  # <-- only POST is limited
 def contact():
     """Contact page with form handling."""
     if request.method == 'POST':
@@ -184,6 +196,10 @@ def contact():
         return jsonify({'success': False, 'errors': errors})
     
     return render_template('contact.html')
+
+@app.errorhandler(RateLimitExceeded)
+def handle_rate_limit(e):
+    return jsonify({"success": False, "error": "Too many requests, please try again later. (for hackers: bro what are you doing? is it your mother server? )"}), 429
 
 # Static files
 @app.route('/robots.txt')

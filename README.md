@@ -1,4 +1,4 @@
-# KoalaSec Website
+#KoalaSEC Website
 
 A modern, dark + purple cybersecurity company website built with Flask, featuring a blog system, contact forms, and responsive design.
 
@@ -33,7 +33,7 @@ A modern, dark + purple cybersecurity company website built with Flask, featurin
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd koalasec
+   cdKoalaSEC
    ```
 
 2. **Create a virtual environment (recommended)**

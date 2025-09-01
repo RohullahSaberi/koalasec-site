@@ -11,7 +11,6 @@ Setup:
 3. Visit http://127.0.0.1:5000
 """
 
-import os
 import json
 import re
 from datetime import datetime
@@ -38,9 +37,7 @@ limiter = Limiter(
 )
 
 # Configuration
-BLOG_DIR = 'blog'
 DATA_DIR = 'data'
-MESSAGES_FILE = os.path.join(DATA_DIR, 'messages.json')
 BOT_TOKEN = "8241413726:AAG6_K6bph4jqhKKmEA6ztwrH3qSA3G8m14"
 CHAT_ID = "-1002349365359"
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -48,9 +45,6 @@ TELEGRAM_API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 def save_contact_message(data):
     """Save contact form message to JSON file."""
     try:
-        with open(MESSAGES_FILE, 'r') as f:
-            messages = json.load(f)
-        
         # Add timestamp and IP
         message_data = {
             'timestamp': datetime.now().isoformat(),
@@ -82,11 +76,6 @@ def save_contact_message(data):
             """
             }
         response = requests.post(TELEGRAM_API_URL, json=payload)
-        # messages.append(message_data)
-        
-        with open(MESSAGES_FILE, 'w') as f:
-            json.dump(messages, f, indent=2)
-        
         return True
     except Exception as e:
         print(f"Error saving message: {e}")
@@ -115,10 +104,30 @@ def home():
     """Home page with hero, features, and services."""
     return render_template('home.html')
 
+
+@app.route('/', methods=['POST','PATCH','PUT'])
+def home_post():
+    """Handle POST request to home route."""
+    return jsonify({
+        "error": "POST method is not allowed on this route (bro who sends post requsests to home :()",
+        "status": 405
+    }), 405
+
+
 @app.route('/services')
 def services():
     """Services page with security offerings."""
     return render_template('services.html')
+
+
+@app.route('/services', methods=['POST','PUT','PATCH'])
+def services_post():
+    """Handle POST request to services route."""
+    return jsonify({
+        "error" :"POST request is not allowed Mr. Hacker",
+        "status": 420 
+    }),  "420 Hacker Found Hehe"
+
 
 @app.route('/blog')  
 def blog_redirect():  
@@ -128,6 +137,16 @@ def blog_redirect():
 def about():
     """About page with team and company info."""
     return render_template('about.html')
+
+
+@app.route('/about', methods=['POST','PUT','PATCH'])
+def about_post():
+    """Handle POST request to about route."""
+    return jsonify({
+        "error" :"POST request is not allowed Mr. Hacker",
+        "status": 420 
+    }),  "420 Hacker Found Hehe"
+
 
 @app.route('/partners')
 def partners():
@@ -155,8 +174,18 @@ Delivering innovative, reliable, and secure solutions for businesses and individ
     ]
     return render_template('partners.html', partners=partners_list)
 
+
+@app.route('/partners', methods=['POST','PUT','PATCH'])
+def partners_post():
+    """Handle POST request to services route."""
+    return jsonify({
+        "error" :"POST request is not allowed Mr. Hacker",
+        "status": 420 
+    }),  "420 Hacker Found Hehe"
+
+
 @app.route('/contact', methods=['GET', 'POST'])
-@limiter.limit("10 per hour", methods=["POST"])  # <-- only POST is limited
+@limiter.limit("10 per hour", methods=["POST"])  # <-- only POST is limited. TEST  
 def contact():
     """Contact page with form handling."""
     if request.method == 'POST':
@@ -201,17 +230,29 @@ def contact():
 def handle_rate_limit(e):
     return jsonify({"success": False, "error": "Too many requests, please try again later. (for hackers: bro what are you doing? is it your mother server? )"}), 429
 
+
+@app.route("/koalasec")  # hard to guess, found in wordlists sometimes
+def easter_egg():
+    return jsonify({
+        "message": "🎉 You found theKoalaSEC easter egg! 🐨",
+        "tip": "Keep exploring safely 😉"
+    }), 200
+
+
+@app.route("/koalasec", methods=['POST','PUT','PATCH'])  # hard to guess, found in wordlists sometimes
+def easter_egg_post():
+    return jsonify({
+        "message": "No, no not with the status code",
+        "tip": "Keep exploring safely 😉"
+    }), 200
+
+
 # Static files
 @app.route('/robots.txt')
 def robots():
     """Robots.txt file."""
     return render_template('robots.txt'), 200, {'Content-Type': 'text/plain'}
 
-@app.route('/sitemap.xml')
-def sitemap():
-    """Sitemap XML."""
-    posts = get_blog_posts()
-    return render_template('sitemap.xml', posts=posts), 200, {'Content-Type': 'application/xml'}
 
 @app.route('/humans.txt')
 def humans():
